@@ -1,0 +1,17 @@
+{
+  "name": "oss-kafka-sink-connector",
+  "config": {
+  "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+  "tasks.max": "1",
+  "topics": "StreamName",
+  "connection.url": "jdbc:oracle:thin:@ADBNAME_high?TNS_ADMIN=/wallet",
+  "connection.user": "Username",
+  "connection.password": "Password",
+  "insert.mode":"insert",
+  "batch.size":"100",
+  "auto.create":"false",
+  "table.name.format": "TableName",
+  "numeric.mapping": "best_fit",
+	"errors.tolerance": "all"
+ }
+}
