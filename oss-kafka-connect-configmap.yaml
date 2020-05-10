@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oss-kafka-connect-configmap
+  labels:
+    app: oss-kafka-connect
+data:
+  connect-distributed.properties: |+
+    group.id=oss-kafka-sink-connector
+
+    bootstrap.servers=cell-1.streaming.uk-london-1.oci.oraclecloud.com:9092
+    sasl.mechanism=PLAIN
+    security.protocol=SASL_SSL
+    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="Your Username" password="Auth token";
+
+    producer.sasl.mechanism=PLAIN
+    producer.security.protocol=SASL_SSL
+    producer.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="Your Username" password="Auth token";
+
+    consumer.sasl.mechanism=PLAIN
+    consumer.security.protocol=SASL_SSL
+    consumer.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="Your Username" password="Auth token";
+
+    config.storage.replication.factor=1
+    config.storage.partitions=5
+    config.storage.topic=ocid1.connectharness.???-config
+
+    status.storage.replication.factor=1
+    status.storage.partitions=5
+    status.storage.topic=ocid1.connectharness.???-status
+
+    offset.storage.replication.factor=1
+    offset.storage.partitions=5
+    offset.storage.topic=ocid1.contolerance nectharness.???-offset
+    offset.flush.interval.ms=10000
+    offset.flush.timeout.ms=5000
+
+    key.converter=org.apache.kafka.connect.storage.StringConverter
+    value.converter=org.apache.kafka.connect.json.JsonConverter
+    key.converter.schemas.enable=false
+    value.converter.schemas.enable=true
+
+    internal.key.converter=org.apache.kafka.connect.json.JsonConverter
+    internal.value.converter=org.apache.kafka.connect.json.JsonConverter
+
+    task.shutdown.graceful.timeout.ms=10000
