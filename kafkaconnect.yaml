@@ -56,4 +56,4 @@ spec:
           - name: ndots
             value: "1"
       imagePullSecrets:
-        - name: apaccpt03secret
+        - name: jhansecret
