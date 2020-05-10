@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: oss-kafka-connect-service
+  labels:
+    app: oss-kafka-connect
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8083
+  selector:
+    app: oss-kafka-connect
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: oss-kafka-connect-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: oss-kafka-connect
+    spec:
+      containers:
+        - name: oss-kafka-connect
+          image: lhr.ocir.io/TenancyName/jhanrepo/kafkaconflent:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: connect-distributed
+              mountPath: /kafka/config.orig/connect-distributed.properties
+              subPath: connect-distributed.properties
+          env:
+            - name: GROUP_ID
+              value: "oss-kafka-sink-connector"
+            - name: BOOTSTRAP_SERVERS
+              value: "cell-1.streaming.uk-london-1.oci.oraclecloud.com:9092"
+            - name: CONFIG_STORAGE_TOPIC
+              value: "ocid1.connectharness.???-config"
+            - name: OFFSET_STORAGE_TOPIC
+              value: "ocid1.connectharness.???-offset"
+            - name: STATUS_STORAGE_TOPIC
+              value: "ocid1.connectharness.???-status"
+          ports:
+            - name: kafka-connect
+              containerPort: 8083
+              protocol: TCP
+      volumes:
+        - name: connect-distributed
+          configMap:
+            name: oss-kafka-connect-configmap
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
+      imagePullSecrets:
+        - name: apaccpt03secret
