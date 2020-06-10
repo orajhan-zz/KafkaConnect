@@ -12,6 +12,6 @@
   "auto.create":"false",
   "table.name.format": "TableName",
   "numeric.mapping": "best_fit",
-	"errors.tolerance": "all"
+  "errors.tolerance": "all"
  }
 }
