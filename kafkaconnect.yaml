@@ -5,7 +5,8 @@ metadata:
   labels:
     app: oss-kafka-connect
 spec:
-  type: LoadBalancer
+  # If you are not using Ingress controller, please add the following LB. I am using Ngnix Ingress controller, hence I removed it
+  # type: LoadBalancer
   ports:
     - port: 80
       protocol: TCP
@@ -13,12 +14,15 @@ spec:
   selector:
     app: oss-kafka-connect
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: oss-kafka-connect-deployment
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: oss-kafka-connect
   template:
     metadata:
       labels:
@@ -26,7 +30,8 @@ spec:
     spec:
       containers:
         - name: oss-kafka-connect
-          image: lhr.ocir.io/TenancyName/jhanrepo/kafkaconflent:latest
+          # using customized kafka connec image that has ADB wallet and Oracle JDBC
+          image: lhr.ocir.io/tenancy_name/repo_name/kafkaconflent:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: connect-distributed
@@ -38,11 +43,11 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: "cell-1.streaming.uk-london-1.oci.oraclecloud.com:9092"
             - name: CONFIG_STORAGE_TOPIC
-              value: "ocid1.connectharness.???-config"
+              value: "ocid1.connectharness.*********************-config"
             - name: OFFSET_STORAGE_TOPIC
-              value: "ocid1.connectharness.???-offset"
+              value: "ocid1.connectharness.*********************-offset"
             - name: STATUS_STORAGE_TOPIC
-              value: "ocid1.connectharness.???-status"
+              value: "ocid1.connectharness.*********************-status"
           ports:
             - name: kafka-connect
               containerPort: 8083
@@ -54,6 +59,6 @@ spec:
       dnsConfig:
         options:
           - name: ndots
-            value: "1" 
+            value: "1"
       imagePullSecrets:
         - name: jhansecret
